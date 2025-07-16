@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>因子分析用テストデータ</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .info {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196F3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .stats {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .stat-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e9ecef;
+        }
+        .stat-title {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+        .download-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .download-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>因子分析用テストデータ（100人分）</h1>
+        
+        <div class="info">
+            <p><strong>データ概要：</strong>理系因子（算数・理科）と文系因子（国語・社会・英語）の潜在構造を持つように設計されたテストデータです。</p>
+            <p><strong>科目：</strong>英語、国語、算数、理科、社会（各0-100点）</p>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button class="download-btn" onclick="downloadCSV()">CSVダウンロード</button>
+            <button class="download-btn" onclick="downloadJSON()">JSONダウンロード</button>
+        </div>
+
+        <div style="overflow-x: auto; max-height: 600px;">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>英語</th>
+                        <th>国語</th>
+                        <th>算数</th>
+                        <th>理科</th>
+                        <th>社会</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="stats" id="stats">
+        </div>
+    </div>
+
+    <script>
+        // データ生成関数
+        function generateTestData() {
+            const data = [];
+            
+            for (let i = 0; i < 100; i++) {
+                const id = String(i).padStart(3, '0');
+                
+                // 理系因子と文系因子の潜在能力を生成
+                const scienceFactor = Math.random() * 100;
+                const literatureFactor = Math.random() * 100;
+                
+                // 各科目の得点を生成（因子に基づく + ランダム要素）
+                const math = Math.max(0, Math.min(100, Math.round(
+                    scienceFactor * 0.7 + Math.random() * 30 + (Math.random() - 0.5) * 20
+                )));
+                
+                const science = Math.max(0, Math.min(100, Math.round(
+                    scienceFactor * 0.8 + Math.random() * 25 + (Math.random() - 0.5) * 15
+                )));
+                
+                const japanese = Math.max(0, Math.min(100, Math.round(
+                    literatureFactor * 0.7 + Math.random() * 30 + (Math.random() - 0.5) * 20
+                )));
+                
+                const socialStudies = Math.max(0, Math.min(100, Math.round(
+                    literatureFactor * 0.6 + Math.random() * 35 + (Math.random() - 0.5) * 25
+                )));
+                
+                // 英語は両因子に軽く影響される
+                const english = Math.max(0, Math.min(100, Math.round(
+                    literatureFactor * 0.4 + scienceFactor * 0.2 + Math.random() * 40 + (Math.random() - 0.5) * 30
+                )));
+                
+                data.push({
+                    id: id,
+                    english: english,
+                    japanese: japanese,
+                    math: math,
+                    science: science,
+                    socialStudies: socialStudies
+                });
+            }
+            
+            return data;
+        }
+
+        // データを生成
+        const testData = generateTestData();
+
+        // テーブルに表示
+        function displayData() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            testData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.id}</td>
+                    <td>${row.english}</td>
+                    <td>${row.japanese}</td>
+                    <td>${row.math}</td>
+                    <td>${row.science}</td>
+                    <td>${row.socialStudies}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 統計情報を表示
+        function displayStats() {
+            const stats = {
+                english: calculateStats(testData.map(d => d.english)),
+                japanese: calculateStats(testData.map(d => d.japanese)),
+                math: calculateStats(testData.map(d => d.math)),
+                science: calculateStats(testData.map(d => d.science)),
+                socialStudies: calculateStats(testData.map(d => d.socialStudies))
+            };
+
+            const statsDiv = document.getElementById('stats');
+            statsDiv.innerHTML = `
+                <div class="stat-box">
+                    <div class="stat-title">英語</div>
+                    平均: ${stats.english.mean.toFixed(1)}<br>
+                    標準偏差: ${stats.english.std.toFixed(1)}
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">国語</div>
+                    平均: ${stats.japanese.mean.toFixed(1)}<br>
+                    標準偏差: ${stats.japanese.std.toFixed(1)}
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">算数</div>
+                    平均: ${stats.math.mean.toFixed(1)}<br>
+                    標準偏差: ${stats.math.std.toFixed(1)}
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">理科</div>
+                    平均: ${stats.science.mean.toFixed(1)}<br>
+                    標準偏差: ${stats.science.std.toFixed(1)}
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">社会</div>
+                    平均: ${stats.socialStudies.mean.toFixed(1)}<br>
+                    標準偏差: ${stats.socialStudies.std.toFixed(1)}
+                </div>
+            `;
+        }
+
+        function calculateStats(arr) {
+            const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
+            const variance = arr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / arr.length;
+            const std = Math.sqrt(variance);
+            return { mean, std };
+        }
+
+        // CSV ダウンロード
+        function downloadCSV() {
+            const csv = [
+                ['ID', '英語', '国語', '算数', '理科', '社会'],
+                ...testData.map(row => [row.id, row.english, row.japanese, row.math, row.science, row.socialStudies])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'factor_analysis_test_data.csv';
+            link.click();
+        }
+
+        // JSON ダウンロード
+        function downloadJSON() {
+            const json = JSON.stringify(testData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'factor_analysis_test_data.json';
+            link.click();
+        }
+
+        // 初期表示
+        displayData();
+        displayStats();
+    </script>
+</body>
+</html>
