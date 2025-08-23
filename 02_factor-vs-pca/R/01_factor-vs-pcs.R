@@ -18,7 +18,7 @@ p <- ggplot(data, aes(x = 算数, y = 理科)) +
   ) +
   theme_minimal()+
   theme(
-    text = element_text(family = "Hiragino Sans GB"), # 日本語フォントの適用
+    text = element_text(family = "Hiragino Kaku Gothic ProN"), # 日本語フォントの適用
     plot.title = element_text(hjust = 0.5),  # ここでタイトルを中央に揃える
     axis.title.x = element_text(hjust = 0.45), # x軸ラベルを中央に揃える
     axis.title.y = element_text(hjust = 0.5)  # y軸ラベルを中央に揃える
@@ -46,7 +46,7 @@ p2 <- ggplot(data_standardized, aes(x = 算数_std, y = 理科_std)) +
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "Hiragino Sans GB"), # 日本語フォントの適用
+    text = element_text(family = "Hiragino Kaku Gothic ProN"), # 日本語フォントの適用
     plot.title = element_text(hjust = 0.5),
     axis.title.x = element_text(hjust = 0.5),
     axis.title.y = element_text(hjust = 0.6)
